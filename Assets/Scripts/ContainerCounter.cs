@@ -15,8 +15,7 @@ public class ContainerCounter : BaseCounter
         if (!player.HasKitchenObject())
         {
             //Player has nothing
-            Transform kitchenObjectTransform = Instantiate(kitchenObjectSO.prefab);
-            kitchenObjectTransform.GetComponent<KitchenObject>().SetKitcheObjectParent(player);
+            KitchenObject.SpawnKitchenObject(kitchenObjectSO, player);
 
             OnPlayerGrabbedObject?.Invoke(this, EventArgs.Empty);
         }

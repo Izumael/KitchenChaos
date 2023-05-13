@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,7 +12,12 @@ public class BaseCounter : MonoBehaviour, IKitchenObjectParent
 
     public virtual void Interact(Player player)
     {
-        Debug.Log("BaseCounter.Interact;");
+        Debug.Log("BaseCounter.Interact();");
+    }
+
+    public virtual void InteractAlternate(Player player)
+    {
+        Debug.Log("BaseCounter.InteractAlternate();");
     }
 
 
@@ -39,6 +45,5 @@ public class BaseCounter : MonoBehaviour, IKitchenObjectParent
     {
         return kitchenObject != null;
     }
-
 
 }
