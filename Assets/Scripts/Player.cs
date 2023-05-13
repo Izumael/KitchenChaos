@@ -40,12 +40,12 @@ public class Player : MonoBehaviour, IKitchenObjectParent
 
     private void GameInput_OnInteractAlternateAction(object sender, EventArgs e)
     {
-        throw new NotImplementedException();
+        selectedCounter?.InteractAlternate(this);
     }
 
     private void GameInput_OnInteractAction(object sender, System.EventArgs e)
     {
-        selectedCounter?.InteractAlternate(this);
+        selectedCounter?.Interact(this);
     }
 
     private void Update()
