@@ -83,12 +83,18 @@ public class Player : MonoBehaviour, IKitchenObjectParent
             }
             else
             {
-                SetSelectedCounter(null);
+                if (selectedCounter != null)
+                {
+                    SetSelectedCounter(null);
+                }
             }
         }
         else
         {
-            SetSelectedCounter(null);
+            if (selectedCounter != null)
+            {
+                SetSelectedCounter(null);
+            }
         }
     }
 
