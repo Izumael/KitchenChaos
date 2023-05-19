@@ -7,6 +7,9 @@ using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
 
 
+#nullable enable
+
+
 namespace Meryel.UnityCodeAssist.Editor
 {
 
@@ -37,7 +40,7 @@ namespace Meryel.UnityCodeAssist.Editor
             //EditorSceneManager.sceneOpened += EditorSceneManager_sceneOpened;
             EditorSceneManager.activeSceneChangedInEditMode += EditorSceneManager_activeSceneChangedInEditMode;
 
-            //Application.logMessageReceived += 
+            Application.logMessageReceived += Application_logMessageReceived;
             //System.Threading.Tasks.TaskScheduler.UnobservedTaskException += 
         }
 
@@ -49,6 +52,7 @@ namespace Meryel.UnityCodeAssist.Editor
 
         private static void EditorSceneManager_sceneOpened(Scene scene, OpenSceneMode mode)
         {
+            Serilog.Log.Debug("Monitor {Event} scene:{Scene} mode:{Mode}", nameof(EditorSceneManager_sceneOpened), scene.name, mode);
             //Debug.Log("EditorSceneManager_sceneOpened");
             OnHierarchyChanged();
         }
@@ -95,7 +99,7 @@ namespace Meryel.UnityCodeAssist.Editor
 
             foreach (var modification in modifications)
             {
-                var target = modification.currentValue.target;
+                var target = modification.currentValue?.target;
                 SetDirty(target);
             }
 
@@ -142,9 +146,11 @@ namespace Meryel.UnityCodeAssist.Editor
             }
         }
 
-        public static void SetDirty(Object obj)
+        public static void SetDirty(Object? obj)
         {
-            if (obj is GameObject go)
+            if (obj == null)
+                return;
+            else if (obj is GameObject go)
                 SetDirty(go);
             else if (obj is Component component)
                 SetDirty(component.gameObject);
@@ -175,6 +181,19 @@ namespace Meryel.UnityCodeAssist.Editor
             dirtyCounter = 0;
         }
 
+
+        private static void Application_logMessageReceived(string condition, string stackTrace, LogType type)
+        {
+            if (type != LogType.Exception && type != LogType.Error && type != LogType.Warning)
+                return;
+
+            if (!stackTrace.Contains("Meryel.UnityCodeAssist.Editor"))
+                return;
+
+            var typeStr = type.ToString();
+
+            NetMQInitializer.Publisher?.SendErrorReport(condition, stackTrace, typeStr);
+        }
 
     }
 
